@@ -1,0 +1,10 @@
+﻿  pch.cpp
+  Dynamic.cpp
+  DynamicPch.cpp
+  Math.cpp
+  Matrix3.cpp
+  Matrix4.cpp
+  Quaternion.cpp
+  Vector3.cpp
+  코드를 생성하고 있습니다...
+  Physics.vcxproj -> C:\Users\parksangwo\Desktop\Github\Dynamics3D\Output\Physics.lib
