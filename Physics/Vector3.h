@@ -119,6 +119,7 @@ public:
 	}
 
 	void clear() { x = y = z = 0.0f; }
+
 	void invert()
 	{
 		x = -x;

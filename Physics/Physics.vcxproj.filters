@@ -37,6 +37,9 @@
     <ClCompile Include="Dynamic.cpp">
       <Filter>Dynamic</Filter>
     </ClCompile>
+    <ClCompile Include="RigidBody.cpp">
+      <Filter>Dynamic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -61,6 +64,9 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="Dynamic.h">
+      <Filter>Dynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBody.h">
       <Filter>Dynamic</Filter>
     </ClInclude>
   </ItemGroup>

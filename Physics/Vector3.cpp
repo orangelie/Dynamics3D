@@ -34,9 +34,9 @@ real Vector3::scalarProduct(const Vector3& v) const
 
 void Vector3::addScaledVector(const Vector3 v, float scale)
 {
-	x = v.x * scale;
-	y = v.y * scale;
-	z = v.z * scale;
+	x += v.x * scale;
+	y += v.y * scale;
+	z += v.z * scale;
 }
 
 

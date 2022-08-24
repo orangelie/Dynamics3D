@@ -1,5 +1,5 @@
 #pragma once
-class Dynamic
-{
-};
 
+#include "Math.h"
+
+#include "RigidBody.h"
