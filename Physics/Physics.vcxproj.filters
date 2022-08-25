@@ -8,7 +8,7 @@
     <Filter Include="Math">
       <UniqueIdentifier>{0ed20c80-bd39-4a1b-94f6-d5e57557b0c0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Dynamic">
+    <Filter Include="Dynamics">
       <UniqueIdentifier>{2f5c8961-4ceb-48b8-bac3-f1ed151066ec}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -34,11 +34,11 @@
     <ClCompile Include="DynamicPch.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Dynamic.cpp">
-      <Filter>Dynamic</Filter>
+    <ClCompile Include="Dynamics.cpp">
+      <Filter>Dynamics</Filter>
     </ClCompile>
     <ClCompile Include="RigidBody.cpp">
-      <Filter>Dynamic</Filter>
+      <Filter>Dynamics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -63,11 +63,11 @@
     <ClInclude Include="DynamicPch.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Dynamic.h">
-      <Filter>Dynamic</Filter>
+    <ClInclude Include="Dynamics.h">
+      <Filter>Dynamics</Filter>
     </ClInclude>
     <ClInclude Include="RigidBody.h">
-      <Filter>Dynamic</Filter>
+      <Filter>Dynamics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

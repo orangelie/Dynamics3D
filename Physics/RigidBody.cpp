@@ -5,19 +5,79 @@ void RigidBody::calculateDerivedData()
 {
 	_orientation.normalize();
 
-    calculateTransformMatrix(_transformMatrix, _positon, _orientation);
+    calculateTransformMatrix(_transformMatrix, _position, _orientation);
     transformInertiaTensor(_inverseInertiaTensorWorld, _inverseInertiaTensor, _transformMatrix);
 }
 
 void RigidBody::integrate(real dt)
 {
+    if (!_isAwake)
+        return;
 
+    _lastFrameAcceleration = _acceleration;
+    _lastFrameAcceleration.addScaledVector(_forceAccum, _inverseMass);
+
+    Vector3 angularAcceleration = _inverseInertiaTensorWorld.transform(_torqueAccum);
+
+    _velocity.addScaledVector(_lastFrameAcceleration, dt);
+    _rotation.addScaledVector(angularAcceleration, dt);
+
+    _velocity *= powf(0.5f, _linearDamping);
+    _rotation *= powf(0.5f, _angularDamping);
+
+    _position.addScaledVector(_velocity, dt);
+    _orientation.addScaledVector(_rotation, dt);
+
+    calculateDerivedData();
+    clearAccumulators();
 }
 
 void RigidBody::clearAccumulators()
 {
     _forceAccum.clear();
     _torqueAccum.clear();
+}
+
+void RigidBody::getOTransform(float matrix[16]) const
+{
+    matrix[0] = (float)_transformMatrix.data[0];
+    matrix[1] = (float)_transformMatrix.data[4];
+    matrix[2] = (float)_transformMatrix.data[8];
+    matrix[3] = 0.0f;
+
+    matrix[4] = (float)_transformMatrix.data[1];
+    matrix[5] = (float)_transformMatrix.data[5];
+    matrix[6] = (float)_transformMatrix.data[9];
+    matrix[7] = 0.0f;
+
+    matrix[8] = (float)_transformMatrix.data[2];
+    matrix[9] = (float)_transformMatrix.data[6];
+    matrix[10] = (float)_transformMatrix.data[10];
+    matrix[11] = 0.0f;
+
+    matrix[12] = (float)_transformMatrix.data[3];
+    matrix[13] = (float)_transformMatrix.data[7];
+    matrix[14] = (float)_transformMatrix.data[11];
+    matrix[15] = 1.0f;
+}
+
+void RigidBody::setAwake(const bool awake)
+{
+    _isAwake = awake;
+
+    if (!awake)
+    {
+        _velocity.clear();
+        _rotation.clear();
+    }
+}
+
+void RigidBody::setCanSleep(const bool canSleep)
+{
+    _isCanSleep = canSleep;
+
+    if (!_isCanSleep && !_isAwake)
+        setAwake();
 }
 
 inline

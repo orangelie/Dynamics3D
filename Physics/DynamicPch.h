@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Dynamic.h"
+#include "Dynamics.h"
 #include "Math.h"
 
 #include <Windows.h>

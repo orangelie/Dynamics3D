@@ -179,7 +179,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Dynamic.h" />
+    <ClInclude Include="Dynamics.h" />
     <ClInclude Include="DynamicPch.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Matrix3.h" />
@@ -190,7 +190,7 @@
     <ClInclude Include="Vector3.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Dynamic.cpp" />
+    <ClCompile Include="Dynamics.cpp" />
     <ClCompile Include="DynamicPch.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Matrix3.cpp" />

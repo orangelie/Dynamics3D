@@ -12,7 +12,7 @@ protected:
 	Vector3 _velocity;
 	Vector3 _rotation;
 
-	Vector3 _positon;
+	Vector3 _position;
 	Quaternion _orientation;
 
 	real _inverseMass;
@@ -36,6 +36,33 @@ public:
 
 	void integrate(real dt);
 	void clearAccumulators();
+
+	void setAcceleration(const Vector3& acceleration) { _acceleration = acceleration; }
+	Vector3 getAcceleration() const { return _acceleration; }
+
+	void setRotation(const Vector3& rotation) { _rotation = rotation; }
+	Vector3 getRotation() const { return _rotation; }
+
+	void setVelocity(const Vector3& velocity) { _velocity = velocity; }
+	Vector3 getVelocity() const { return _velocity; }
+
+	void setOrientation(const Quaternion& orientation) { _orientation = orientation; }
+	Quaternion getOrientation() const { return _orientation; }
+
+	void setPosition(const Vector3& position) { _position = position; }
+	Vector3 getPosition() const { return _position; }
+
+	void getOTransform(float matrix[16]) const;
+
+	void setMass(const real mass) { _inverseMass = 1.0f / mass; }
+
+	void setInertiaTensor(const Matrix3& inertiaTensor) { _inverseInertiaTensor.setInverse(inertiaTensor); }
+
+	void setDamping(const real linear, const real angular) { _linearDamping = linear; _angularDamping = angular; }
+
+	void setAwake(const bool awake = true);
+
+	void setCanSleep(const bool canSleep);
 
 };
 
