@@ -6,6 +6,8 @@
 #include <Windows.h>
 #include <windowsx.h>
 
+#include <stdio.h>
+
 using int8		= __int8;
 using int16		= __int16;
 using int32		= __int32;

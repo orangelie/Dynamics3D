@@ -3,7 +3,7 @@
 
 void RigidBody::calculateDerivedData()
 {
-	_orientation.normalize();
+    _orientation.normalize();
 
     calculateTransformMatrix(_transformMatrix, _position, _orientation);
     transformInertiaTensor(_inverseInertiaTensorWorld, _inverseInertiaTensor, _transformMatrix);
@@ -22,8 +22,8 @@ void RigidBody::integrate(real dt)
     _velocity.addScaledVector(_lastFrameAcceleration, dt);
     _rotation.addScaledVector(angularAcceleration, dt);
 
-    _velocity *= powf(0.5f, _linearDamping);
-    _rotation *= powf(0.5f, _angularDamping);
+    _velocity *= powf(_linearDamping, dt);
+    _rotation *= powf(_angularDamping, dt);
 
     _position.addScaledVector(_velocity, dt);
     _orientation.addScaledVector(_rotation, dt);

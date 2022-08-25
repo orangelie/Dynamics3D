@@ -6,14 +6,28 @@ double GWidth = 1080;
 double GHeight = 860;
 
 RigidBody GBody;
+GameTimer GGameTimer;
 
 void initRigid()
 {
-    GBody.setAwake();
+    real mass = 8.0f;
+
+    GBody.setAwake(true);
     GBody.setCanSleep(true);
 
     GBody.setPosition(Vector3(0.0f, 0.0f, 0.0f));
-    GBody.setAcceleration(Vector3(0.5f, 0.0f, 0.0f));
+    GBody.setAcceleration(Vector3(0.0f, 0.0f, 0.0f));
+    GBody.setDamping(0.95f, 0.80f);
+
+    Vector3 halfSize(25.0f, 25.0f, 25.0f);
+    Matrix3 inertiaTensor;
+    inertiaTensor.setBlockInertiaTensor(halfSize, mass);
+    GBody.setInertiaTensor(inertiaTensor);
+
+    GBody.setMass(mass);
+    GBody.setOrientation(Quaternion(1.0f, 0.0f, 0.0f, 0.0f));
+    GBody.setRotation(Vector3(0.0f, 0.0f, 0.0f));
+    GBody.setVelocity(Vector3(2.0f, 0.0f, 0.0f));
 }
 
 void display()
@@ -31,14 +45,13 @@ void display()
 
     glPushMatrix();
     glColor3f(1.0f, 0.0f, 1.0f);
-    glTranslatef(0.0f, -100.0f, 0.0f);
+
+    GLfloat matrix[16] = {};
+    GBody.getOTransform(matrix);
     glScalef(50.0f, 50.0f, 50.0f);
-    glBegin(GL_POLYGON);
-    glVertex3d(-1.0, -1.0, -1.0);
-    glVertex3d(-1.0, 1.0, -1.0);
-    glVertex3d(1.0, 1.0, -1.0);
-    glVertex3d(1.0, -1.0, -1.0);
-    glEnd();
+    glMultMatrixf(matrix);
+
+    glutSolidCube(1.0f);
     glPopMatrix();
 
     glutSwapBuffers();
@@ -47,7 +60,11 @@ void display()
 
 void idle()
 {
-    // GBody.integrate()
+    GGameTimer.Tick();
+    real dt = GGameTimer.DeltaTime();
+
+    GBody.integrate(dt);
+
     glutPostRedisplay();
 }
 
@@ -62,6 +79,9 @@ int main(int argc, char** argv)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(-GWidth / 2.0, GWidth / 2.0, -GHeight / 2.0, GHeight / 2.0, -1.0, 100.0);
+
+    initRigid();
+    GGameTimer.Reset();
 
     glutDisplayFunc(display);
     glutIdleFunc(idle);

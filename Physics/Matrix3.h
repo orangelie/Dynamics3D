@@ -61,7 +61,7 @@ public:
 
 	Vector3 transform(const Vector3& v) const
 	{
-		return *this * v;
+		return (*this) * v;
 	}
 
 	Vector3 transformTranspose(const Vector3& v) const

@@ -4,3 +4,4 @@
 
 #include "GL/freeglut.h"
 #include "DynamicPch.h"
+#include "GameTimer.h"
