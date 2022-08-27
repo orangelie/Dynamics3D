@@ -39,6 +39,7 @@ public:
 
 	void setAcceleration(const Vector3& acceleration) { _acceleration = acceleration; }
 	Vector3 getAcceleration() const { return _acceleration; }
+	Vector3 getLastFrameAcceleration() const { return _lastFrameAcceleration; }
 
 	void setRotation(const Vector3& rotation) { _rotation = rotation; }
 	Vector3 getRotation() const { return _rotation; }
@@ -52,15 +53,22 @@ public:
 	void setPosition(const Vector3& position) { _position = position; }
 	Vector3 getPosition() const { return _position; }
 
+	Matrix3 getInverseInertiaTensorWorld() const { return _inverseInertiaTensorWorld; }
+
 	void getOTransform(float matrix[16]) const;
 
+	void addVelocity(const Vector3& velocity);
+	void addRotation(const Vector3& rotation);
+
 	void setMass(const real mass) { _inverseMass = 1.0f / mass; }
+	real getInverseMass() const { return _inverseMass; }
 
 	void setInertiaTensor(const Matrix3& inertiaTensor) { _inverseInertiaTensor.setInverse(inertiaTensor); }
 
 	void setDamping(const real linear, const real angular) { _linearDamping = linear; _angularDamping = angular; }
 
 	void setAwake(const bool awake = true);
+	bool getAwake() const { return _isAwake; }
 
 	void setCanSleep(const bool canSleep);
 

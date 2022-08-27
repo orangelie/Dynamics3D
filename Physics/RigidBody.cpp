@@ -61,6 +61,16 @@ void RigidBody::getOTransform(float matrix[16]) const
     matrix[15] = 1.0f;
 }
 
+void RigidBody::addVelocity(const Vector3& velocity)
+{
+    _velocity += velocity;
+}
+
+void RigidBody::addRotation(const Vector3& rotation)
+{
+    _rotation += rotation;
+}
+
 void RigidBody::setAwake(const bool awake)
 {
     _isAwake = awake;
