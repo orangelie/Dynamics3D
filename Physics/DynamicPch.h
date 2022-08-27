@@ -7,6 +7,7 @@
 #include <windowsx.h>
 
 #include <stdio.h>
+#include <assert.h>
 
 using int8		= __int8;
 using int16		= __int16;

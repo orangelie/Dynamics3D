@@ -40,6 +40,9 @@
     <ClCompile Include="RigidBody.cpp">
       <Filter>Dynamics</Filter>
     </ClCompile>
+    <ClCompile Include="Contacts.cpp">
+      <Filter>Dynamics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -67,6 +70,9 @@
       <Filter>Dynamics</Filter>
     </ClInclude>
     <ClInclude Include="RigidBody.h">
+      <Filter>Dynamics</Filter>
+    </ClInclude>
+    <ClInclude Include="Contacts.h">
       <Filter>Dynamics</Filter>
     </ClInclude>
   </ItemGroup>

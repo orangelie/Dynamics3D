@@ -40,7 +40,7 @@ void Vector3::addScaledVector(const Vector3 v, float scale)
 }
 
 
-float Vector3::magnitude() const
+real Vector3::magnitude() const
 {
 	return sqrtf((x * x) + (y * y) + (z * z));
 }

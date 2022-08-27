@@ -28,6 +28,10 @@ void initRigid()
     GBody.setOrientation(Quaternion(1.0f, 0.0f, 0.0f, 0.0f));
     GBody.setRotation(Vector3(0.0f, 0.0f, 0.0f));
     GBody.setVelocity(Vector3(2.0f, 0.0f, 0.0f));
+
+
+    Contacts contacts;
+    contacts.calculateContactBasis();
 }
 
 void display()
