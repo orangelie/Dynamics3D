@@ -1,7 +1,24 @@
 #include "pch.h"
 #include "Contacts.h"
 
-void Contacts::setBodyData(RigidBody* one, RigidBody* two, real friction, real restitution)
+void Contact::matchAwakeState()
+{
+	if (!_body[1])
+		return;
+
+	bool body0Awake = _body[0]->getAwake();
+	bool body1Awake = _body[0]->getAwake();
+
+	if (body0Awake ^ body1Awake)
+	{
+		if (body0Awake)
+			_body[1]->setAwake();
+		else if(body1Awake)
+			_body[0]->setAwake();
+	}
+}
+
+void Contact::setBodyData(RigidBody* one, RigidBody* two, real friction, real restitution)
 {
 	_body[0] = one;
 	_body[1] = two;
@@ -10,7 +27,7 @@ void Contacts::setBodyData(RigidBody* one, RigidBody* two, real friction, real r
 	_restitution = restitution;
 }
 
-void Contacts::calculateInternals(real dt)
+void Contact::calculateInternals(real dt)
 {
 	if(!_body[0])
 		swapBodies();
@@ -26,10 +43,10 @@ void Contacts::calculateInternals(real dt)
 	if(_body[1])
 		_contactVelocity -= calculateLocalVelocity(1, dt);
 
-
+	calculateDesiredDeltaVelocity(dt);
 }
 
-void Contacts::swapBodies()
+void Contact::swapBodies()
 {
 	_contactNormal *= -1.0f;
 
@@ -38,7 +55,7 @@ void Contacts::swapBodies()
 	_body[1] = tmp;
 }
 
-void Contacts::calculateContactBasis()
+void Contact::calculateContactBasis()
 {
 	Vector3 contactTangent[2];
 
@@ -80,7 +97,7 @@ void Contacts::calculateContactBasis()
 	_contactToWorld.setComponents(_contactNormal, contactTangent[0], contactTangent[1]);
 }
 
-Vector3 Contacts::calculateLocalVelocity(unsigned bodyIndex, real dt)
+Vector3 Contact::calculateLocalVelocity(unsigned bodyIndex, real dt)
 {
 	RigidBody* body = _body[bodyIndex];
 
@@ -98,7 +115,7 @@ Vector3 Contacts::calculateLocalVelocity(unsigned bodyIndex, real dt)
 	return deltaVelWorld;
 }
 
-void Contacts::calculateDesiredDeltaVelocity(real dt)
+void Contact::calculateDesiredDeltaVelocity(real dt)
 {
 	// 후에 보류
 
@@ -118,7 +135,7 @@ void Contacts::calculateDesiredDeltaVelocity(real dt)
 }
 
 inline
-Vector3 Contacts::calculateFrictionLessImpulse(Matrix3* inverseInertiaTensor)
+Vector3 Contact::calculateFrictionLessImpulse(Matrix3* inverseInertiaTensor)
 {
 	Vector3 impulseContact;
 
@@ -147,12 +164,12 @@ Vector3 Contacts::calculateFrictionLessImpulse(Matrix3* inverseInertiaTensor)
 }
 
 inline
-Vector3 Contacts::calculateFrictionImpulse(Matrix3* inverseInertiaTensor)
+Vector3 Contact::calculateFrictionImpulse(Matrix3* inverseInertiaTensor)
 {
 	return Vector3();
 }
 
-void Contacts::applyVelocityChange(Vector3 velocityChange[2], Vector3 rotationChange[2])
+void Contact::applyVelocityChange(Vector3 velocityChange[2], Vector3 rotationChange[2])
 {
 	Matrix3 inverseInertiaTensor[2];
 
@@ -190,7 +207,7 @@ void Contacts::applyVelocityChange(Vector3 velocityChange[2], Vector3 rotationCh
 	}
 }
 
-void Contacts::applyPositionChange(Vector3 linearChange[2], Vector3 angularChange[2], real penetration)
+void Contact::applyPositionChange(Vector3 linearChange[2], Vector3 angularChange[2], real penetration)
 {
 	const real angularLimit = 0.2f;
 
@@ -272,3 +289,109 @@ void calculateOrthonormalBasis(Vector3* x, Vector3* y, Vector3* z)
 	z->normalize();
 	(*y) = (*z) % (*x);
 }
+
+ContactResolver::ContactResolver(unsigned iterations, real velocityEpsilon, real positionEpsilon)
+{
+	setIterations(iterations);
+	setEpsilon(velocityEpsilon, positionEpsilon);
+}
+
+ContactResolver::ContactResolver(unsigned velocityIteration, unsigned positionIteration, real velocityEpsilon, real positionEpsilon)
+{
+	setIterations(velocityIteration, positionIteration);
+	setEpsilon(velocityEpsilon, positionEpsilon);
+}
+
+bool ContactResolver::isValid() const
+{
+	return (_velocityIteration > 0 && _positionIteration > 0 && _velocityEpsilon >= 0.0f && _positionEpsilon >= 0.0f);
+}
+
+void ContactResolver::resolveContact(Contact* contactArray, unsigned contactCount, real dt)
+{
+	if (contactCount == 0)
+		return;
+	if (!isValid())
+		return;
+
+	prepareContacts(contactArray, contactCount, dt);
+	adjustPositions(contactArray, contactCount, dt);
+	adjustVelocities(contactArray, contactCount, dt);
+}
+
+void ContactResolver::setIterations(unsigned iterations)
+{
+	setIterations(iterations, iterations);
+}
+
+void ContactResolver::setIterations(unsigned velocityIteration, unsigned positionIteration)
+{
+	_velocityIteration = velocityIteration;
+	_positionIteration = positionIteration;
+}
+
+void ContactResolver::setEpsilon(real velocityEpsilon, real positionEpsilon)
+{
+	_velocityEpsilon = velocityEpsilon;
+	_positionEpsilon = positionEpsilon;
+}
+
+void ContactResolver::prepareContacts(Contact* c, unsigned contactCount, real dt)
+{
+	Contact* finalContact = c + contactCount;
+	for (Contact* contact = c; contact < finalContact; ++contact)
+	{
+		contact->calculateInternals(dt);
+	}
+}
+
+void ContactResolver::adjustVelocities(Contact* c, unsigned contactCount, real dt)
+{
+
+}
+
+void ContactResolver::adjustPositions(Contact* c, unsigned contactCount, real dt)
+{
+	Vector3 deltaPosition;
+	Vector3 linearChange[2], angularChange[2];
+	real max;
+	unsigned index;
+
+	_positionIterationUsed = 0;
+	while (_positionIterationUsed < _positionIteration)
+	{
+		max = _positionEpsilon;
+		index = contactCount;
+
+		for (unsigned i = 0; i < contactCount; ++i)
+		{
+			if (c[i]._penetration > max)
+			{
+				max = c[i]._penetration;
+				index = i;
+			}
+		}
+
+		if (index == contactCount)
+			return;
+
+		c[index].matchAwakeState();
+		c[index].applyPositionChange(linearChange, angularChange, max);
+
+
+		for (unsigned i = 0; i < contactCount; ++i)
+		{
+			for (unsigned b = 0; b < 2; ++b) if (c[i]._body[b])
+			{
+				for (unsigned d = 0; d < 2; ++d)
+				{
+					deltaPosition = linearChange[d] + angularChange[d].vectorProduct(c[i]._relativeContactPosition[b]);
+					c[i]._penetration += deltaPosition.scalarProduct(c[i]._contactNormal) * (b ? 1.0f : -1.0f);
+				}
+			}
+		}
+
+		++_positionIterationUsed;
+	}
+}
+

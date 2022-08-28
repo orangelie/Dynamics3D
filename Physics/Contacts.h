@@ -4,7 +4,7 @@ void calculateOrthonormalBasis(Vector3* x, Vector3* y, Vector3* z);
 
 class ContactResolver;
 
-class Contacts
+class Contact
 {
 private:
 	friend class ContactResolver;
@@ -19,6 +19,7 @@ public:
 	real _penetration;
 	real _restitution;
 
+	void matchAwakeState();
 	void setBodyData(RigidBody* one, RigidBody* two, real friction, real restitution);
 	void calculateInternals(real dt);
 	void swapBodies();
@@ -62,6 +63,20 @@ private:
 	bool _validSettings;
 
 public:
+	ContactResolver(unsigned iterations, real velocityEpsilon = 0.01f, real positionEpsilon = 0.01f);
+	ContactResolver(unsigned velocityIteration, unsigned positionIteration, real velocityEpsilon = 0.01f, real positionEpsilon = 0.01f);
 
+	bool isValid() const;
+
+	void resolveContact(Contact* contactArray, unsigned contactCount, real dt);
+
+	void setIterations(unsigned iterations);
+	void setIterations(unsigned velocityIteration, unsigned positionIteration);
+	void setEpsilon(real velocityEpsilon, real positionEpsilon);
+
+protected:
+	void prepareContacts(Contact* c, unsigned contactCount, real dt);
+	void adjustVelocities(Contact* c, unsigned contactCount, real dt);
+	void adjustPositions(Contact* c, unsigned contactCount, real dt);
 
 };

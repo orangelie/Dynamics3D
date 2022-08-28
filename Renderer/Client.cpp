@@ -30,7 +30,7 @@ void initRigid()
     GBody.setVelocity(Vector3(2.0f, 0.0f, 0.0f));
 
 
-    Contacts contacts;
+    Contact contacts;
     contacts.calculateContactBasis();
 }
 
