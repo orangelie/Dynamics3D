@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Dependencies">
+      <UniqueIdentifier>{524fec28-dadb-4d1f-83d8-7558e9f14f22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Bin">
+      <UniqueIdentifier>{20418168-fd75-4439-87b0-2f5345879868}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Lib">
+      <UniqueIdentifier>{0f53377a-6c8a-40b4-8fdd-27993f48a340}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Includes">
+      <UniqueIdentifier>{8fd39775-962e-4c7c-b90d-9d29b7a8104d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering">
+      <UniqueIdentifier>{e75d7110-cead-4c8f-bbe3-b7eef034f71f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{dd413cc5-1f98-4ab8-8c1e-befa70244a21}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Client.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTimer.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="GL\freeglut.h">
+      <Filter>Dependencies\Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="GL\freeglut_ext.h">
+      <Filter>Dependencies\Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="GL\freeglut_std.h">
+      <Filter>Dependencies\Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="GL\glut.h">
+      <Filter>Dependencies\Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="GLRenderer.rc">
+      <Filter>리소스 파일</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="GLRenderer.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="freeglut.dll">
+      <Filter>Dependencies\Bin</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Client.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTimer.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="freeglut.lib">
+      <Filter>Dependencies\Lib</Filter>
+    </Library>
+  </ItemGroup>
+</Project>
