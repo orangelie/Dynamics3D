@@ -1,12 +1,1 @@
-﻿  pch.cpp
-  Contacts.cpp
-  Dynamics.cpp
-  DynamicPch.cpp
-  Math.cpp
-  Matrix3.cpp
-  Matrix4.cpp
-  Quaternion.cpp
-  RigidBody.cpp
-  Vector3.cpp
-  코드를 생성하고 있습니다...
-LINK : fatal error LNK1104: 'C:\Users\parksangwo\Desktop\Github\Dynamics3D\Output\Physics.lib' 파일을 열 수 없습니다.
+﻿
