@@ -180,6 +180,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Contacts.h" />
+    <ClInclude Include="Contact_Narrow.h" />
     <ClInclude Include="Dynamics.h" />
     <ClInclude Include="DynamicPch.h" />
     <ClInclude Include="Math.h" />
@@ -192,6 +193,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Contacts.cpp" />
+    <ClCompile Include="Contact_Narrow.cpp" />
     <ClCompile Include="Dynamics.cpp" />
     <ClCompile Include="DynamicPch.cpp" />
     <ClCompile Include="Math.cpp" />

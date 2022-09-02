@@ -19,10 +19,8 @@ namespace orangelie
 		RigidBody mRigidBody1, mRigidBody2;
 		Contact mContact[256] = {};
 		std::unique_ptr<ContactResolver> mContactResolver;
-
-		//Physics::CollisionBox mCBox1;
-		//Physics::CollisionBox mCBox2;
-		//Physics::CollisionData mCData;
+		CollisionBox mCBox1, mCBox2;
+		CollisionData mCData;
 
 
 		std::unordered_map<std::string, std::vector<Shader::FontType>> mFontData;
@@ -353,7 +351,7 @@ namespace orangelie
 
 		void BuildRigidBodies()
 		{
-			//mCData.contactArray = mContact;
+			mCData.contactArray = mContact;
 
 			mRigidBody1.setCanSleep(false);
 			mRigidBody1.setAwake(true);
@@ -466,20 +464,18 @@ namespace orangelie
 
 		void CollisionDetection()
 		{
-			/*
-			if (!mCData.HasMoreContacts())
+			if (!mCData.hasMoreContacts())
 				return;
 
-			Physics::CollisionDetector::BoxAndBox(mCBox1, mCBox2, &mCData);
+			// CollisionDetector:boxAndBox(mCBox1, mCBox2, &mCData);
 
-			if (!mCData.HasMoreContacts())
+			if (!mCData.hasMoreContacts())
 				return;
-			*/
 
-			 // Physics::CollisionDetector::BoxAndBox(mCBox2, mCBox1, &mCData);
+			 // CollisionDetector::boxAndBox(mCBox2, mCBox1, &mCData);
 		}
 
-		DirectX::XMFLOAT4X4 real16ToFloat4x4(const float* m)
+		inline DirectX::XMFLOAT4X4 real16ToFloat4x4(const float* m)
 		{
 			DirectX::XMFLOAT4X4 result;
 
@@ -509,28 +505,27 @@ namespace orangelie
 			mRigidBody2.getOTransform(tempMatrix);
 			mBox2VB->World = real16ToFloat4x4(tempMatrix);
 			mBox2VB->NumframeDirty = Shader::gNumFrameResources;
-			/*
+			
 			// generate contacts
-			mCData.Reset(256);
+			mCData.reset(256);
 			mCData.friction = 0.9f;
 			mCData.restitution = 0.1f;
 			mCData.tolerance = 0.1f;
 
 			// generate collision boxes
-			mCBox1.mHalfSize = mHalfSize;
-			mCBox1.mBody = &mRigidBody1;
-			mCBox1.CalculateInternals();
+			mCBox1.halfSize = mHalfSize;
+			mCBox1.body = &mRigidBody1;
+			mCBox1.calculateInternals();
 
-			mCBox2.mHalfSize = mHalfSize;
-			mCBox2.mBody = &mRigidBody2;
-			mCBox2.CalculateInternals();
+			mCBox2.halfSize = mHalfSize;
+			mCBox2.body = &mRigidBody2;
+			mCBox2.calculateInternals();
 
 			// collision detection
 			CollisionDetection();
 
 			// contact resolve
 			mContactResolver->resolveContact(mCData.contactArray, mCData.contactCount, duration);
-			*/
 		}
 
 		void UpdateObjectCB()

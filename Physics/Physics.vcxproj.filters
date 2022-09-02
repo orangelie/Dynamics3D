@@ -43,6 +43,9 @@
     <ClCompile Include="Contacts.cpp">
       <Filter>Dynamics</Filter>
     </ClCompile>
+    <ClCompile Include="Contact_Narrow.cpp">
+      <Filter>Dynamics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -73,6 +76,9 @@
       <Filter>Dynamics</Filter>
     </ClInclude>
     <ClInclude Include="Contacts.h">
+      <Filter>Dynamics</Filter>
+    </ClInclude>
+    <ClInclude Include="Contact_Narrow.h">
       <Filter>Dynamics</Filter>
     </ClInclude>
   </ItemGroup>

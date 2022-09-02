@@ -117,8 +117,6 @@ Vector3 Contact::calculateLocalVelocity(unsigned bodyIndex, real dt)
 
 void Contact::calculateDesiredDeltaVelocity(real dt)
 {
-	// 후에 보류
-
 	const real velLimit = 0.25f;
 	real deltaVelocity = 0.0f;
 
@@ -347,9 +345,49 @@ void ContactResolver::prepareContacts(Contact* c, unsigned contactCount, real dt
 
 void ContactResolver::adjustVelocities(Contact* c, unsigned contactCount, real dt)
 {
+	Vector3 deltaVelocity;
+	Vector3 velocityChange[2], rotationChange[2];
+	real max;
+	unsigned index;
 
+	_velocityIterationUsed = 0;
+	while (_velocityIterationUsed < _velocityIteration)
+	{
+		max = _velocityEpsilon;
+		index = contactCount;
+
+		for (unsigned i = 0; i < contactCount; ++i)
+		{
+			if (c[i]._desiredDeltaVelocity > max)
+			{
+				max = c[i]._desiredDeltaVelocity;
+				index = i;
+			}
+		}
+
+		if (index == contactCount)
+			return;
+
+		c[index].matchAwakeState();
+		c[index].applyVelocityChange(velocityChange, rotationChange);
+
+
+		for (unsigned i = 0; i < contactCount; ++i)
+		{
+			for (unsigned b = 0; b < 2; ++b) if (c[i]._body[b])
+			{
+				for (unsigned d = 0; d < 2; ++d)
+				{
+					deltaVelocity = velocityChange[d] + rotationChange[d].vectorProduct(c[i]._relativeContactPosition[b]);
+					c[i]._contactVelocity += c[i]._contactToWorld.transformTranspose(deltaVelocity) * (b ? -1.0f : 1.0f);
+				}
+			}
+		}
+
+		++_velocityIterationUsed;
+	}
 }
-
+ 
 void ContactResolver::adjustPositions(Contact* c, unsigned contactCount, real dt)
 {
 	Vector3 deltaPosition;

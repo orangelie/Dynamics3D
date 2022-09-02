@@ -56,6 +56,7 @@ public:
 	Matrix3 getInverseInertiaTensorWorld() const { return _inverseInertiaTensorWorld; }
 
 	void getOTransform(float matrix[16]) const;
+	Matrix4 getTransform() const { return _transformMatrix; };
 
 	void addVelocity(const Vector3& velocity);
 	void addRotation(const Vector3& rotation);
