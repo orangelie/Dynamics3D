@@ -164,7 +164,60 @@ Vector3 Contact::calculateFrictionLessImpulse(Matrix3* inverseInertiaTensor)
 inline
 Vector3 Contact::calculateFrictionImpulse(Matrix3* inverseInertiaTensor)
 {
-	return Vector3();
+	real inverseMass = _body[0]->getInverseMass();
+
+	Matrix3 impulseToTorque;
+	impulseToTorque.setSkewSymmetric(_relativeContactPosition[0]);
+
+	Matrix3 deltaVelWorld = impulseToTorque;
+	deltaVelWorld *= inverseInertiaTensor[0];
+	deltaVelWorld *= impulseToTorque;
+	deltaVelWorld *= -1.0f;
+
+	if (_body[1])
+	{
+		Matrix3 impulseToTorque;
+		impulseToTorque.setSkewSymmetric(_relativeContactPosition[1]);
+
+		Matrix3 deltaVelWorld2 = impulseToTorque;
+		deltaVelWorld2 *= inverseInertiaTensor[1];
+		deltaVelWorld2 *= impulseToTorque;
+		deltaVelWorld2 *= -1.0f;
+
+		deltaVelWorld += deltaVelWorld2;
+		inverseMass += _body[1]->getInverseMass();
+	}
+
+	Matrix3 deltaVelocity = _contactToWorld.transpose();
+	deltaVelocity *= deltaVelWorld;
+	deltaVelocity *= _contactToWorld;
+
+	_contactToWorld.data[0] += inverseMass;
+	_contactToWorld.data[4] += inverseMass;
+	_contactToWorld.data[8] += inverseMass;
+
+
+	Matrix3 impulseMatrix = deltaVelocity.inverse();
+	Vector3 velKill(_desiredDeltaVelocity, -_contactVelocity.y, -_contactVelocity.z);
+	Vector3 impulseContact = impulseMatrix.transform(velKill);
+
+	real planarImpulse = sqrtf(impulseContact.y * impulseContact.y + impulseContact.z * impulseContact.z);
+	if (planarImpulse > impulseContact.x * _friction)
+	{
+		impulseContact.y /= planarImpulse;
+		impulseContact.z /= planarImpulse;
+
+		impulseContact.x =
+				(deltaVelocity.data[0]) + 
+				(deltaVelocity.data[1] * _friction * impulseContact.y) +
+				(deltaVelocity.data[2] * _friction * impulseContact.z);
+		impulseContact.x = _desiredDeltaVelocity / impulseContact.x;
+
+		impulseContact.y *= _friction * impulseContact.x;
+		impulseContact.z *= _friction * impulseContact.x;
+	}
+
+	return impulseContact;
 }
 
 void Contact::applyVelocityChange(Vector3 velocityChange[2], Vector3 rotationChange[2])

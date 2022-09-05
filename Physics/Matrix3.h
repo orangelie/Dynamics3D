@@ -50,6 +50,20 @@ public:
 
 	void setBlockInertiaTensor(const Vector3& v, const real mass);
 
+	void setSkewSymmetric(real x, real y, real z)
+	{
+		data[0] = 0;	data[1] = -z;	data[2] = y;
+		data[3] = z;	data[4] = 0;	data[5] = -x;
+		data[6] = -y;	data[7] = x;	data[8] = 0;
+	}
+
+	void setSkewSymmetric(const Vector3& v)
+	{
+		data[0] = 0;	data[1] = -v.z;	data[2] = v.y;
+		data[3] = v.z;	data[4] = 0;	data[5] = -v.x;
+		data[6] = -v.y;	data[7] = v.x;	data[8] = 0;
+	}
+
 	Vector3 operator*(const Vector3& v) const
 	{
 		return Vector3(
@@ -75,7 +89,7 @@ public:
 
 	Vector3 getAxisVector(unsigned index) const;
 
-	Matrix3 setTranspose(const Matrix3& m)
+	void setTranspose(const Matrix3& m)
 	{
 		data[0] = m.data[0]; data[1] = m.data[3]; data[2] = m.data[6];
 		data[3] = m.data[1]; data[4] = m.data[4]; data[5] = m.data[7];
