@@ -1,15 +1,4 @@
-﻿  pch.cpp
-  Camera.cpp
-  DDSTextureLoader.cpp
-  Font.cpp
-  FrameResource.cpp
-  GameTimer.cpp
-  GeometryGenerator.cpp
-  Renderer.cpp
-  Utils.cpp
-  main.cpp
-  코드를 생성하고 있습니다...
-  DxRenderer.vcxproj -> C:\Users\parksangwo\Desktop\Github\Dynamics3D\Output\DxRenderer.exe
+﻿  DxRenderer.vcxproj -> C:\Users\parksangwo\Desktop\Github\Dynamics3D\Output\DxRenderer.exe
           1개 파일이 복사되었습니다.
           1개 파일이 복사되었습니다.
           1개 파일이 복사되었습니다.

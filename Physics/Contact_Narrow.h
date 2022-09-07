@@ -56,3 +56,28 @@ struct CollisionBox : public CollisionPrimitive
 {
 	Vector3 halfSize;
 };
+
+struct CollisionSphere : public CollisionPrimitive
+{
+	real radius;
+};
+
+struct CollisionPlane
+{
+	Vector3 direction;
+	real offset;
+};
+
+
+class CollisionDetector
+{
+public:
+
+
+protected:
+
+
+private:
+
+
+};
