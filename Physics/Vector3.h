@@ -104,9 +104,9 @@ public:
 
 	void addScaledVector(const Vector3 v, float scale);
 
-	float magnitude() const;
+	real magnitude() const;
 
-	float squaredMagnitude() const { return (x * x) + (y * y) + (z * z); }
+	real squaredMagnitude() const { return (x * x) + (y * y) + (z * z); }
 
 	void normalize();
 

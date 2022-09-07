@@ -192,9 +192,9 @@ Vector3 Contact::calculateFrictionImpulse(Matrix3* inverseInertiaTensor)
 	deltaVelocity *= deltaVelWorld;
 	deltaVelocity *= _contactToWorld;
 
-	_contactToWorld.data[0] += inverseMass;
-	_contactToWorld.data[4] += inverseMass;
-	_contactToWorld.data[8] += inverseMass;
+	deltaVelocity.data[0] += inverseMass;
+	deltaVelocity.data[4] += inverseMass;
+	deltaVelocity.data[8] += inverseMass;
 
 
 	Matrix3 impulseMatrix = deltaVelocity.inverse();
@@ -400,14 +400,12 @@ void ContactResolver::adjustVelocities(Contact* c, unsigned contactCount, real d
 {
 	Vector3 deltaVelocity;
 	Vector3 velocityChange[2], rotationChange[2];
-	real max;
-	unsigned index;
 
 	_velocityIterationUsed = 0;
 	while (_velocityIterationUsed < _velocityIteration)
 	{
-		max = _velocityEpsilon;
-		index = contactCount;
+		real max = _velocityEpsilon;
+		unsigned index = contactCount;
 
 		for (unsigned i = 0; i < contactCount; ++i)
 		{
@@ -419,7 +417,7 @@ void ContactResolver::adjustVelocities(Contact* c, unsigned contactCount, real d
 		}
 
 		if (index == contactCount)
-			return;
+			break;
 
 		c[index].matchAwakeState();
 		c[index].applyVelocityChange(velocityChange, rotationChange);
@@ -431,8 +429,12 @@ void ContactResolver::adjustVelocities(Contact* c, unsigned contactCount, real d
 			{
 				for (unsigned d = 0; d < 2; ++d)
 				{
-					deltaVelocity = velocityChange[d] + rotationChange[d].vectorProduct(c[i]._relativeContactPosition[b]);
-					c[i]._contactVelocity += c[i]._contactToWorld.transformTranspose(deltaVelocity) * (b ? -1.0f : 1.0f);
+					if (c[i]._body[b] == c[index]._body[d])
+					{
+						deltaVelocity = velocityChange[d] + rotationChange[d].vectorProduct(c[i]._relativeContactPosition[b]);
+						c[i]._contactVelocity += c[i]._contactToWorld.transformTranspose(deltaVelocity) * (b ? -1.0f : 1.0f);
+						c[i].calculateDesiredDeltaVelocity(dt);
+					}
 				}
 			}
 		}
@@ -464,7 +466,7 @@ void ContactResolver::adjustPositions(Contact* c, unsigned contactCount, real dt
 		}
 
 		if (index == contactCount)
-			return;
+			break;
 
 		c[index].matchAwakeState();
 		c[index].applyPositionChange(linearChange, angularChange, max);
@@ -476,8 +478,11 @@ void ContactResolver::adjustPositions(Contact* c, unsigned contactCount, real dt
 			{
 				for (unsigned d = 0; d < 2; ++d)
 				{
-					deltaPosition = linearChange[d] + angularChange[d].vectorProduct(c[i]._relativeContactPosition[b]);
-					c[i]._penetration += deltaPosition.scalarProduct(c[i]._contactNormal) * (b ? 1.0f : -1.0f);
+					if (c[i]._body[b] == c[index]._body[d])
+					{
+						deltaPosition = linearChange[d] + angularChange[d].vectorProduct(c[i]._relativeContactPosition[b]);
+						c[i]._penetration += deltaPosition.scalarProduct(c[i]._contactNormal) * (b ? 1.0f : -1.0f);
+					}
 				}
 			}
 		}

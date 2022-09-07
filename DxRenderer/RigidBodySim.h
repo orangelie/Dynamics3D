@@ -467,12 +467,14 @@ namespace orangelie
 			if (!mCData.hasMoreContacts())
 				return;
 
-			// CollisionDetector:boxAndBox(mCBox1, mCBox2, &mCData);
+			CollisionDetector::boxAndBox(mCBox1, mCBox2, &mCData);
 
+			/*
 			if (!mCData.hasMoreContacts())
 				return;
 
-			 // CollisionDetector::boxAndBox(mCBox2, mCBox1, &mCData);
+			 CollisionDetector::boxAndBox(mCBox2, mCBox1, &mCData);
+			 */
 		}
 
 		inline DirectX::XMFLOAT4X4 real16ToFloat4x4(const float* m)
@@ -588,7 +590,8 @@ namespace orangelie
 			using Shader::TextVertex;
 			
 			DirectX::XMFLOAT4 Acc = {};
-			std::string sentence = "GameTime: " + std::to_string(mGameTimer.TotalTime()) + " seconds";
+			// std::string sentence = "GameTime: " + std::to_string(mGameTimer.TotalTime()) + " seconds";
+			std::string sentence = "(" + std::to_string(mRigidBody1.getPosition().x) + ", " + std::to_string(mRigidBody1.getPosition().y) + ", " + std::to_string(mRigidBody1.getPosition().z) + ")";
 			int numLetters = (int)sentence.size();
 
 			if (numLetters >= gMaxNumTextCharacters)
