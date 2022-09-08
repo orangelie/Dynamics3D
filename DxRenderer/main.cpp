@@ -17,7 +17,7 @@ int __stdcall WinMain(
 	{
 		std::unique_ptr<orangelie::Renderer> appRenderer(new ZEKROS_ENGINE);
 
-		appRenderer->Initialize(hInstance, 1080, 860);
+		appRenderer->Initialize(hInstance, " < DirectX12 > - DynamicsApp @orangelie", 1080, 860);
 		appRenderer->Render();
 	}
 	catch (const std::exception& e)

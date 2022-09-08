@@ -108,7 +108,7 @@ namespace orangelie
 		return DefWindowProcW(hWnd, hMessage, wParam, lParam);
 	}
 
-	void Renderer::Initialize(HINSTANCE hInstance, UINT screenWidth, UINT screenHeight)
+	void Renderer::Initialize(HINSTANCE hInstance, const std::string& title, UINT screenWidth, UINT screenHeight)
 	{
 
 		/*
@@ -120,6 +120,8 @@ namespace orangelie
 		*/
 
 		BuildWindows(hInstance, screenWidth, screenHeight);
+		SetWindowTextA(mHwnd, title.c_str());
+
 		BuildDxgiAndD3D12(screenWidth, screenHeight);
 		init();
 	}

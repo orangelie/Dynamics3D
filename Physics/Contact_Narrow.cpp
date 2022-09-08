@@ -47,7 +47,7 @@ unsigned CollisionDetector::boxAndBox(const CollisionBox& one, const CollisionBo
 
 		return 1;
 	}
-	if (best < 6)
+	else if (best < 6)
 	{
 		fillPointFaceBoxBox(two, one, toCentre * -1.0f, data, best - 3, pen);
 		data->addContacts(1);
@@ -56,59 +56,51 @@ unsigned CollisionDetector::boxAndBox(const CollisionBox& one, const CollisionBo
 	}
 	else
 	{
-		//
 		best -= 6;
 		unsigned oneAxisIndex = best / 3;
 		unsigned twoAxisIndex = best % 3;
 		Vector3 oneAxis = one.getAxis(oneAxisIndex);
-		Vector3 twoAxis = two.getAxis(twoAxisIndex);
+		Vector3 twoAxis = one.getAxis(twoAxisIndex);
 		Vector3 axis = oneAxis % twoAxis;
 		axis.normalize();
 
-		// The axis should point from box one to box two.
-		if (axis * toCentre > 0) axis = axis * -1.0f;
+		if (axis * toCentre > 0.0f)
+			axis *= -1.0f;
 
-		// We have the axes, but not the edges: each axis has 4 edges parallel
-		// to it, we need to find which of the 4 for each object. We do
-		// that by finding the point in the centre of the edge. We know
-		// its component in the direction of the box's collision axis is zero
-		// (its a mid-point) and we determine which of the extremes in each
-		// of the other axes is closest.
+
 		Vector3 ptOnOneEdge = one.halfSize;
 		Vector3 ptOnTwoEdge = two.halfSize;
-		for (unsigned i = 0; i < 3; i++)
-		{
-			if (i == oneAxisIndex) ptOnOneEdge[i] = 0;
-			else if (one.getAxis(i) * axis > 0) ptOnOneEdge[i] = -ptOnOneEdge[i];
 
-			if (i == twoAxisIndex) ptOnTwoEdge[i] = 0;
-			else if (two.getAxis(i) * axis < 0) ptOnTwoEdge[i] = -ptOnTwoEdge[i];
+		for (unsigned i = 0; i < 3; ++i)
+		{
+			if (i == oneAxisIndex)
+				ptOnOneEdge[i] = 0.0f;
+			else if (one.getAxis(i) * axis > 0.0f)
+				ptOnOneEdge[i] = -ptOnOneEdge[i];
+
+			if (i == twoAxisIndex)
+				ptOnTwoEdge[i] = 0.0f;
+			else if (two.getAxis(i) * axis < 0.0f)
+				ptOnTwoEdge[i] = -ptOnTwoEdge[i];
 		}
 
-		// Move them into world coordinates (they are already oriented
-		// correctly, since they have been derived from the axes).
 		ptOnOneEdge = one.getTransform() * ptOnOneEdge;
 		ptOnTwoEdge = two.getTransform() * ptOnTwoEdge;
 
-		// So we have a point and a direction for the colliding edges.
-		// We need to find out point of closest approach of the two
-		// line-segments.
 		Vector3 vertex = contactPoint(
 			ptOnOneEdge, oneAxis, one.halfSize[oneAxisIndex],
-			ptOnTwoEdge, twoAxis, two.halfSize[twoAxisIndex],
-			bestSingleAxis > 2
-		);
+			ptOnTwoEdge, twoAxis, one.halfSize[twoAxisIndex],
+			bestSingleAxis > 2);
 
-		// We can fill the contact.
+
 		Contact* contact = data->contacts;
 
-		contact->_penetration = pen;
 		contact->_contactNormal = axis;
 		contact->_contactPoint = vertex;
-		contact->setBodyData(one.body, two.body,
-			data->friction, data->restitution);
+		contact->_penetration = pen;
+		contact->setBodyData(one.body, two.body, data->friction, data->restitution);
+
 		data->addContacts(1);
-		//
 
 		return 1;
 	}
@@ -197,10 +189,6 @@ static inline Vector3 contactPoint(
 	const Vector3& pTwo,
 	const Vector3& dTwo,
 	real twoSize,
-
-	// If this is true, and the contact point is outside
-	// the edge (in the case of an edge-face contact) then
-	// we use one's midpoint, otherwise we use two's.
 	bool useOne)
 {
 	Vector3 toSt, cOne, cTwo;
@@ -217,18 +205,12 @@ static inline Vector3 contactPoint(
 
 	denom = smOne * smTwo - dpOneTwo * dpOneTwo;
 
-	// Zero denominator indicates parrallel lines
-	if (fabsf(denom) < 0.0001f) {
+	if (fabsf(denom) < 0.0001f)
 		return useOne ? pOne : pTwo;
-	}
 
 	mua = (dpOneTwo * dpStaTwo - smTwo * dpStaOne) / denom;
 	mub = (smOne * dpStaTwo - dpOneTwo * dpStaOne) / denom;
 
-	// If either of the edges has the nearest point out
-	// of bounds, then the edges aren't crossed, we have
-	// an edge-face contact. Our point is on the edge, which
-	// we know from the useOne parameter.
 	if (mua > oneSize ||
 		mua < -oneSize ||
 		mub > twoSize ||

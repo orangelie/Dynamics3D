@@ -19,7 +19,7 @@ namespace orangelie
 		CLASSIFICATION_H(Renderer);
 		virtual LRESULT MessageHandler(HWND hWnd, UINT hMessage, WPARAM wParam, LPARAM lParam);
 
-		void Initialize(HINSTANCE hInstance, UINT screenWidth, UINT screenHeight);
+		void Initialize(HINSTANCE hInstance, const std::string& title, UINT screenWidth, UINT screenHeight);
 		void Render();
 
 	private:

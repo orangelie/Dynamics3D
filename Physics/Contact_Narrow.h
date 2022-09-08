@@ -104,10 +104,6 @@ static inline Vector3 contactPoint(
 	const Vector3& pTwo,
 	const Vector3& dTwo,
 	real twoSize,
-
-	// If this is true, and the contact point is outside
-	// the edge (in the case of an edge-face contact) then
-	// we use one's midpoint, otherwise we use two's.
 	bool useOne);
 
 class CollisionDetector

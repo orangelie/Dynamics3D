@@ -14,12 +14,13 @@ namespace orangelie
 	class RigidBodySim : public Renderer
 	{
 	private:
+		bool isSimulating = true;
 		const real mhSize = 1.0f;
 		Vector3 mHalfSize = { mhSize, mhSize, mhSize };
-		RigidBody mRigidBody1, mRigidBody2;
+		RigidBody mRigidBody1, mRigidBody2, mRigidBody3;
 		Contact mContact[256] = {};
 		std::unique_ptr<ContactResolver> mContactResolver;
-		CollisionBox mCBox1, mCBox2;
+		CollisionBox mCBox1, mCBox2, mCBox3;
 		CollisionData mCData;
 
 
@@ -28,6 +29,7 @@ namespace orangelie
 		Shader::RenderItem* mTextVB = nullptr;
 		Shader::RenderItem* mBox1VB = nullptr;
 		Shader::RenderItem* mBox2VB = nullptr;
+		Shader::RenderItem* mBox3VB = nullptr;
 
 		Camera mCamera;
 		std::vector<std::unique_ptr<FrameResource>> mFrameResources;
@@ -334,8 +336,24 @@ namespace orangelie
 			mAllRenderItems.push_back(std::move(quadRitem2));
 
 
+			auto quadRitem3 = std::make_unique<Shader::RenderItem>();
+			quadRitem3->ObjIndex = 2;
+			DirectX::XMStoreFloat4x4(&quadRitem3->World, DirectX::XMMatrixScaling(mHalfSize.x * 2.0f, mHalfSize.y * 2.0f, mHalfSize.z * 2.0f));
+			quadRitem3->TexTransform = Utils::MatrixIdentity();
+			quadRitem3->Mat = mMaterials["wood"].get();
+			quadRitem3->meshGeo = mDrawArgs["shapeGeo"].get();
+			quadRitem3->IndexCount = quadRitem3->meshGeo->DrawArgs["box"].IndexCount;
+			quadRitem3->BaseVertexLocation = quadRitem3->meshGeo->DrawArgs["box"].BaseVertexLocation;
+			quadRitem3->StartIndexLocation = quadRitem3->meshGeo->DrawArgs["box"].StartIndexLocation;
+			quadRitem3->PrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+			mBox3VB = quadRitem3.get();
+			mRenderLayer[(size_t)Shader::RenderLayer::Opaque].push_back(quadRitem3.get());
+			mAllRenderItems.push_back(std::move(quadRitem3));
+
+
 			auto textRitem = std::make_unique<Shader::RenderItem>();
-			textRitem->ObjIndex = 2;
+			textRitem->ObjIndex = 3;
 			textRitem->TexTransform = Utils::MatrixIdentity();
 			textRitem->Mat = mMaterials["text"].get();
 			textRitem->meshGeo = mDrawArgs["textGeo"].get();
@@ -358,30 +376,41 @@ namespace orangelie
 			mRigidBody1.setMass(8.0f);
 			mRigidBody1.setVelocity(Vector3(0.0f, 0.0f, 0.0f));
 			mRigidBody1.setAcceleration(Vector3(0.0f, -10.0f, 0.0f));
-			mRigidBody1.setPosition(Vector3(0.4f, 13.0f, 10.0f));
+			mRigidBody1.setPosition(Vector3(1.2f, 13.0f, 10.0f));
 			mRigidBody1.setDamping(0.95f, 0.8f);
 			mRigidBody1.setRotation(Vector3(0.0f, 0.0f, 0.0f));
 			mRigidBody1.setOrientation(Quaternion(0.0f, 0.0f, 0.0f, 1.0f));
-
 			Matrix3 inertiaTensor;
 			inertiaTensor.setBlockInertiaTensor(mHalfSize, mHalfSize.x * mHalfSize.y * mHalfSize.z * 8.0f);
 			mRigidBody1.setInertiaTensor(inertiaTensor);
-
-
 
 			mRigidBody2.setCanSleep(false);
 			mRigidBody2.setAwake(true);
 			mRigidBody2.setMass(8.0f);
 			mRigidBody2.setVelocity(Vector3(0.0f, 0.0f, 0.0f));
-			mRigidBody2.setAcceleration(Vector3(0.0f, 0.0f, 0.0f));
+			mRigidBody2.setAcceleration(Vector3(0.0f, -10.0f, 0.0f));
 			mRigidBody2.setPosition(Vector3(0.0f, 0.0f, 10.0f));
 			mRigidBody2.setDamping(0.95f, 0.8f);
 			mRigidBody2.setRotation(Vector3(0.0f, 0.0f, 0.0f));
 			mRigidBody2.setOrientation(Quaternion(0.0f, 0.0f, 0.0f, 1.0f));
-
 			mRigidBody2.setInertiaTensor(inertiaTensor);
 
+			mRigidBody3.setCanSleep(false);
+			mRigidBody3.setAwake(true);
+			mRigidBody3.setMass(8.0f);
+			mRigidBody3.setVelocity(Vector3(0.0f, 40.0f, 0.0f));
+			mRigidBody3.setAcceleration(Vector3(0.0f, -10.0f, 0.0f));
+			mRigidBody3.setPosition(Vector3(0.5f, -40.0f, 10.0f));
+			mRigidBody3.setDamping(0.95f, 0.8f);
+			mRigidBody3.setRotation(Vector3(0.0f, 0.0f, 0.0f));
+			mRigidBody3.setOrientation(Quaternion(0.0f, 0.0f, 0.0f, 1.0f));
+			mRigidBody3.setInertiaTensor(inertiaTensor);
+
+
 			mContactResolver = std::make_unique<ContactResolver>(256 * 8);
+
+			UpdateRigidBodies(0.00001f);
+			isSimulating = false;
 		}
 
 		void BuildFrameResources()
@@ -468,13 +497,8 @@ namespace orangelie
 				return;
 
 			CollisionDetector::boxAndBox(mCBox1, mCBox2, &mCData);
-
-			/*
-			if (!mCData.hasMoreContacts())
-				return;
-
-			 CollisionDetector::boxAndBox(mCBox2, mCBox1, &mCData);
-			 */
+			CollisionDetector::boxAndBox(mCBox2, mCBox3, &mCData);
+			CollisionDetector::boxAndBox(mCBox3, mCBox1, &mCData);
 		}
 
 		inline DirectX::XMFLOAT4X4 real16ToFloat4x4(const float* m)
@@ -491,43 +515,61 @@ namespace orangelie
 
 		void UpdateRigidBodies(float dt)
 		{
-			// duration
-			float duration = dt;
+			if ((GetAsyncKeyState('Z') & 0x8000) != 0)
+				isSimulating = false;
+			if ((GetAsyncKeyState('X') & 0x8000) != 0)
+				isSimulating = true;
 
-			// integrate
-			mRigidBody1.integrate(duration);
+			if (isSimulating)
+			{
+				// duration
+				float duration = dt;
 
-			float tempMatrix[16] = {};
-			mRigidBody1.getOTransform(tempMatrix);
-			mBox1VB->World = real16ToFloat4x4(tempMatrix);
-			mBox1VB->NumframeDirty = Shader::gNumFrameResources;
+				// integrate
+				mRigidBody1.integrate(duration);
 
-			mRigidBody2.integrate(duration);
+				float tempMatrix[16] = {};
+				mRigidBody1.getOTransform(tempMatrix);
+				mBox1VB->World = real16ToFloat4x4(tempMatrix);
+				mBox1VB->NumframeDirty = Shader::gNumFrameResources;
 
-			mRigidBody2.getOTransform(tempMatrix);
-			mBox2VB->World = real16ToFloat4x4(tempMatrix);
-			mBox2VB->NumframeDirty = Shader::gNumFrameResources;
-			
-			// generate contacts
-			mCData.reset(256);
-			mCData.friction = 0.9f;
-			mCData.restitution = 0.1f;
-			mCData.tolerance = 0.1f;
+				mRigidBody2.integrate(duration);
 
-			// generate collision boxes
-			mCBox1.halfSize = mHalfSize;
-			mCBox1.body = &mRigidBody1;
-			mCBox1.calculateInternals();
+				mRigidBody2.getOTransform(tempMatrix);
+				mBox2VB->World = real16ToFloat4x4(tempMatrix);
+				mBox2VB->NumframeDirty = Shader::gNumFrameResources;
 
-			mCBox2.halfSize = mHalfSize;
-			mCBox2.body = &mRigidBody2;
-			mCBox2.calculateInternals();
+				mRigidBody3.integrate(duration);
 
-			// collision detection
-			CollisionDetection();
+				mRigidBody3.getOTransform(tempMatrix);
+				mBox3VB->World = real16ToFloat4x4(tempMatrix);
+				mBox3VB->NumframeDirty = Shader::gNumFrameResources;
 
-			// contact resolve
-			mContactResolver->resolveContact(mCData.contactArray, mCData.contactCount, duration);
+				// generate contacts
+				mCData.reset(256);
+				mCData.friction = 0.9f;
+				mCData.restitution = 0.1f;
+				mCData.tolerance = 0.1f;
+
+				// generate collision boxes
+				mCBox1.halfSize = mHalfSize;
+				mCBox1.body = &mRigidBody1;
+				mCBox1.calculateInternals();
+
+				mCBox2.halfSize = mHalfSize;
+				mCBox2.body = &mRigidBody2;
+				mCBox2.calculateInternals();
+
+				mCBox3.halfSize = mHalfSize;
+				mCBox3.body = &mRigidBody3;
+				mCBox3.calculateInternals();
+
+				// collision detection
+				CollisionDetection();
+
+				// contact resolve
+				mContactResolver->resolveContact(mCData.contactArray, mCData.contactCount, duration);
+			}
 		}
 
 		void UpdateObjectCB()
@@ -590,8 +632,7 @@ namespace orangelie
 			using Shader::TextVertex;
 			
 			DirectX::XMFLOAT4 Acc = {};
-			// std::string sentence = "GameTime: " + std::to_string(mGameTimer.TotalTime()) + " seconds";
-			std::string sentence = "(" + std::to_string(mRigidBody1.getPosition().x) + ", " + std::to_string(mRigidBody1.getPosition().y) + ", " + std::to_string(mRigidBody1.getPosition().z) + ")";
+			 std::string sentence = "GameTime: " + std::to_string(mGameTimer.TotalTime()) + " seconds";
 			int numLetters = (int)sentence.size();
 
 			if (numLetters >= gMaxNumTextCharacters)
@@ -649,7 +690,7 @@ namespace orangelie
 	protected:
 		virtual void init() override
 		{
-			mCamera.SetPosition(0.0f, 0.0f, 0.0f);
+			mCamera.SetPosition(0.0f, 0.0f, -20.0f);
 
 			HR(mGraphicsCommandList->Reset(mCommandAllocator.Get(), nullptr));
 
