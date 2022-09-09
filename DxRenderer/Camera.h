@@ -27,13 +27,14 @@ namespace orangelie
 		DirectX::XMFLOAT3 Position() const;
 
 	private:
-		DirectX::XMFLOAT4X4 mProjection, mView;
+		DirectX::XMFLOAT4X4 mProjection = Utils::MatrixIdentity();
+		DirectX::XMFLOAT4X4 mView = Utils::MatrixIdentity();
 		DirectX::XMFLOAT3
 			mPosition = { 0.0f, 0.0f, 0.0f },
 			mLookAt = { 0.0f, 0.0f, 1.0f },
 			mRight = { 1.0f, 0.0f, 0.0f },
 			mUp = { 0.0f, 1.0f, 0.0f };
-		bool mViewDirty;
+		bool mViewDirty = true;
 
 	};
 }

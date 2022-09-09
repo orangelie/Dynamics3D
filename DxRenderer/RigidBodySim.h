@@ -691,6 +691,7 @@ namespace orangelie
 		virtual void init() override
 		{
 			mCamera.SetPosition(0.0f, 0.0f, -20.0f);
+			mCamera.UpdateViewMatrix();
 
 			HR(mGraphicsCommandList->Reset(mCommandAllocator.Get(), nullptr));
 

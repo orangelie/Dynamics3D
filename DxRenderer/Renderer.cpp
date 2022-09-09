@@ -130,7 +130,7 @@ namespace orangelie
 	{
 		MSG msg = {};
 		mGameTimer.Reset();
-
+		
 		for (;msg.message != WM_QUIT;)
 		{
 			if (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
