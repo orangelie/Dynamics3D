@@ -754,7 +754,7 @@ namespace orangelie
 			auto rtv = rtvHandle();
 			auto dsv = dsvHandle();
 
-			FLOAT colors[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
+			FLOAT colors[4] = { 0.2f, 0.2f, 0.4f, 1.0f };
 			mGraphicsCommandList->ClearRenderTargetView(rtv, colors, 0, nullptr);
 			mGraphicsCommandList->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 			mGraphicsCommandList->OMSetRenderTargets(1, &rtv, true, &dsv);
